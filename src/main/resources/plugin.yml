@@ -1,0 +1,4 @@
+name: OriginMine
+version: '${project.version}'
+main: net.mistersevent.originmine.OriginMine
+

@@ -1,0 +1,24 @@
+mysql:
+  host: 'localhost'
+  db: 'test'
+  user: 'root'
+  pass: ''
+  port: 3306
+
+
+Server:
+  use: false # Deixe true se for o servidor de minas, deixe false se for o servidor normal.
+  server-name-default: "rankup" # Nome do servidor padrão
+  server-name-bungeecord: "mina" # Nome da mina bungeecord.
+  world-mine: "mina" # Coloque o nome do mundo da mina que estara no servidor da mina.
+  block-potion-effect-dig-speed-and-night-vision-in-world-mine: true #Bloquea o jogador ir para o mundo mina com poção de velocidade e poção de visão noturna
+
+Blocks_Regeneration:
+  Percentage:
+    IRON: 15.0
+    GOLD: 35.0
+    COAL: 70.0
+    LAPIS: 15.0
+    DIAMOND: 45.0
+    REDSTONE: 57.0
+    EMERALD: 90.0
