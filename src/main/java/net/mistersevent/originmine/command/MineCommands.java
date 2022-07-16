@@ -7,6 +7,8 @@ import net.mistersevent.core.spigot.command.builder.impl.CommandBuilderImpl;
 import net.mistersevent.core.spigot.command.helper.CommandHelper;
 import net.mistersevent.originmine.OriginMine;
 import net.mistersevent.originmine.account.Account;
+import net.mistersevent.originmine.menus.ReceiverMinaInventory;
+import net.mistersevent.originmine.menus.SenderMinaInventory;
 import net.mistersevent.originmine.rpacket.AccountStoragePacket;
 import net.mistersevent.originmine.service.StorageService;
 import org.bukkit.Bukkit;
@@ -16,8 +18,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class MineCommands {
 
-    private final Redis redis = (Redis) (Redis) Services.get(Redis.class);
-    private final StorageService storageService = (StorageService) Services.get(StorageService.class);
 
     public MineCommands() {
         this.setup();
@@ -29,23 +29,13 @@ public class MineCommands {
             public void handler(CommandSender commandSender, CommandHelper commandHelper, String... strings) throws Exception {
                 if (OriginMine.RECEIVER) {
                     Player p = commandHelper.getPlayer(commandSender);
-                    p.sendMessage("§aConectando ao servidor padrão...");
-                    p.setMetadata("spawnCommand", new FixedMetadataValue(OriginMine.getInstance(), true));
-                    MineCommands.this.redis.sendPacket(new AccountStoragePacket(new Account(p)), "mines.sender");
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(OriginMine.getInstance(), () -> {
-                        OriginMine.getInstance().getBungeeChannelApi().connect(p, OriginMine.getInstance().getConfig().getString("Server.server-name-default"));
-                    }, 60L);
+                    new ReceiverMinaInventory().showInventory(p);
                 }else {
                     Player p = commandHelper.getPlayer(commandSender);
-                    MineCommands.this.storageService.remove(p.getName());
-                    MineCommands.this.redis.sendPacket(new AccountStoragePacket(new Account(p)), "mines.receiver");
-                    p.sendMessage("§aConectando ao servidor de mineração...");
-                    p.setMetadata("mineCommand", new FixedMetadataValue(OriginMine.getInstance(), true));
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(OriginMine.getInstance(), () -> {
-                        OriginMine.getInstance().getBungeeChannelApi().connect(p, OriginMine.getInstance().getConfig().getString("Server.server-name-bungeecord"));
-                    }, 60L);
+                    new SenderMinaInventory().showInventory(p);
                 }
             }
-        }).player().plugin(OriginMine.getInstance()).register("mina", "mundomina");
+
+        }).player().plugin(OriginMine.getInstance()).register("mina", "mineracao");
     }
 }

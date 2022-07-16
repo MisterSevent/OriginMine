@@ -1,11 +1,16 @@
 package net.mistersevent.originmine.listener.player;
 
+import com.sun.management.VMOption;
 import net.mistersevent.core.other.dabatase.redis.Redis;
 import net.mistersevent.core.spigot.Services;
+import net.mistersevent.core.spigot.api.title.Title;
 import net.mistersevent.originmine.OriginMine;
 import net.mistersevent.originmine.account.Account;
 import net.mistersevent.originmine.json.SerializeInventory;
+import net.mistersevent.originmine.rpacket.AccountStoragePacket;
 import net.mistersevent.originmine.service.StorageService;
+import net.mistersevent.pick.Main;
+import net.mistersevent.pick.model.UserModel;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,9 +62,31 @@ public class PlayerListener implements Listener {
             }
         }
 
-        p.teleport(this.getRandomLocationInsideWorldBorder(Bukkit.getWorld(OriginMine.getInstance().getConfig().getString("Server.world-mine"))));
+        if (OriginMine.RECEIVER) {
+            if (OriginMine.getInstance().getConfig().getBoolean("Server.title.use")) {
+                Title.sendTitle(p, OriginMine.getInstance().getConfig().getString("Server.title.line_1").replace("&", "§"), OriginMine.getInstance().getConfig().getString("Server.title.line_2").replace("&", "§"));
+            }
+            p.teleport(getRandomLocationInsideWorldBorder(Bukkit.getWorld(OriginMine.getInstance().getConfig().getString("Server.world-mine"))));
+        }
         this.storageService.remove(p.getName());
         e.setJoinMessage(null);
+    }
+
+    @EventHandler
+    public void leave(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+        if (OriginMine.RECEIVER) {
+            if (!p.hasMetadata("spawnCommand")) {
+                redis.sendPacket(new AccountStoragePacket(new Account(p)), "mines.sender");
+            } else {
+                p.removeMetadata("spawnCommand", OriginMine.getInstance());
+            }
+        } else if (p.hasMetadata("mineCommand")) {
+            p.removeMetadata("mineCommand", OriginMine.getInstance());
+        }
+
+        storageService.remove(p.getName());
+        e.setQuitMessage(null);
     }
 
     @EventHandler
@@ -99,8 +126,8 @@ public class PlayerListener implements Listener {
                 return;
             }
 
-            if (!e.getClickedInventory().equals(p.getInventory()) && (p.hasMetadata("minaCommand") || p.hasMetadata("spawnCommand"))) {
-                p.sendMessage("§cVocê não pode interagir com inventários enquanto está se conectando à algum servidor.");
+            if (!e.getClickedInventory().equals(p.getInventory()) && (p.hasMetadata("mineCommand") || p.hasMetadata("spawnCommand"))) {
+                p.sendMessage(OriginMine.getInstance().getConfig().getString("interacting-connecting").replace("&", "§"));
                 e.setCancelled(true);
             }
         }
@@ -109,8 +136,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        if (p.hasMetadata("minaCommand") || p.hasMetadata("spawnCommand")) {
-            p.sendMessage("§cVocê não pode interagir enquanto está conectando a outros servidores.");
+        if (p.hasMetadata("mineCommand") || p.hasMetadata("spawnCommand")) {
+            p.sendMessage(OriginMine.getInstance().getConfig().getString("interacting-connecting").replace("&", "§"));
             e.setCancelled(true);
         }
     }
@@ -118,8 +145,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
-        if (p.hasMetadata("minaCommand") || p.hasMetadata("spawnCommand")) {
-            p.sendMessage("§cVocê não pode dropar items enquanto está se conectando a outros servidores.");
+        if (p.hasMetadata("mineCommand") || p.hasMetadata("spawnCommand")) {
+            p.sendMessage(OriginMine.getInstance().getConfig().getString("dropping-connecting").replace("&", "§"));
             e.setCancelled(true);
         }
     }
@@ -128,7 +155,7 @@ public class PlayerListener implements Listener {
     public void onPlayerCommandPreProcess(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
         if (p.hasMetadata("mineCommand") || p.hasMetadata("spawnCommand")) {
-            p.sendMessage("§cVocê não pode digitar comandos enquanto está se conectando a outro servidor!");
+            p.sendMessage(OriginMine.getInstance().getConfig().getString("digiting-connecting").replace("&", "§"));
             e.setCancelled(true);
         }
     }

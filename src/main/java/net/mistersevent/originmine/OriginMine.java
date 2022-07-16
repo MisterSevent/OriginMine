@@ -13,16 +13,21 @@ import net.mistersevent.core.other.dabatase.redis.impl.RedisImpl;
 import net.mistersevent.core.other.dabatase.redis.packet.RedisPacket;
 import net.mistersevent.core.other.util.ClassGetter;
 import net.mistersevent.core.spigot.Services;
+import net.mistersevent.core.spigot.api.configuration.ConfigAPI;
 import net.mistersevent.core.spigot.plugin.MisterSeventPlugin;
 import net.mistersevent.originmine.account.Account;
 import net.mistersevent.originmine.command.MineCommands;
 import net.mistersevent.originmine.listener.player.PlayerListener;
+import net.mistersevent.originmine.listener.server.MineListeners;
+import net.mistersevent.originmine.menus.ReceiverMinaInventory;
+import net.mistersevent.originmine.menus.SenderMinaInventory;
 import net.mistersevent.originmine.rpacket.AccountStoragePacket;
+import net.mistersevent.originmine.runnable.RunnableBlock;
 import net.mistersevent.originmine.service.StorageService;
 import net.mistersevent.originmine.service.impl.StorageServiceImpl;
 import net.mistersevent.originmine.util.BungeeChannelApi;
+import net.mistersevent.pick.enchantment.attributes.EnchantmentAttributes;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
 
 public final class OriginMine extends MisterSeventPlugin {
 
@@ -30,6 +35,7 @@ public final class OriginMine extends MisterSeventPlugin {
     public static boolean RECEIVER;
 
     private BungeeChannelApi bungeeChannelApi;
+
 
     @Override
     public void load() {
@@ -39,7 +45,7 @@ public final class OriginMine extends MisterSeventPlugin {
         saveDefaultConfig();
         registerListeners();
         Services.create(this);
-        Services.add(Redis.class, new RedisImpl("origin-mine", new DatabaseCredentials("redis-15939.c261.us-east-1-4.ec2.cloud.redislabs.com:15939", (String) null, (String) null, "bvKIMvhIXKetkLoVvc6wCDqGkrASNPtE", 3306)));
+        Services.add(Redis.class, new RedisImpl("origin-mine", new DatabaseCredentials(this.getConfig().getString("redis.host"), (String) null, (String) null, this.getConfig().getString("redis.pass"), this.getConfig().getInt("redis.port"))));
         Services.add(MySQL.class, new MySQLImpl("origin-mine", new DatabaseCredentials(this.getConfig().getString("mysql.host"), this.getConfig().getString("mysql.db"), this.getConfig().getString("mysql.user"), this.getConfig().getString("mysql.pass"), this.getConfig().getInt("mysql.port"))));
         Services.add(StorageService.class, new StorageServiceImpl());
 
@@ -77,7 +83,10 @@ public final class OriginMine extends MisterSeventPlugin {
         }, "mines.receiver", "mines.sender");
 
         new MineCommands();
-        this.registerListeners(new Listener[]{new PlayerListener()});
+        this.registerListeners(new PlayerListener(), new MineListeners(), new ReceiverMinaInventory(), new SenderMinaInventory());
+        if (RECEIVER) {
+            new RunnableBlock().runTaskTimer(this, 20L, OriginMine.getInstance().getConfig().getInt("regeneration-delay") * 20L);
+        }
     }
 
     public void disable() {
@@ -98,4 +107,6 @@ public final class OriginMine extends MisterSeventPlugin {
     public BungeeChannelApi getBungeeChannelApi() {
         return bungeeChannelApi;
     }
+
 }
+

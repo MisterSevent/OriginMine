@@ -17,6 +17,7 @@
     </properties>
 
     <build>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -82,16 +83,30 @@
             <systemPath>${project.basedir}/lib/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>net.mistersevent.pick</groupId>
+            <artifactId>pick-evolution</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.DevNatan</groupId>
             <artifactId>inventory-framework</artifactId>
             <version>3e3d5945b2</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6</version>
+            <scope>compile</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>net.mistersevent.core</groupId>
             <artifactId>MisterSeventCore</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/MisterSeventCore-1.0.jar</systemPath>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

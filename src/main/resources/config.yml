@@ -1,24 +1,114 @@
-mysql:
-  host: 'localhost'
-  db: 'test'
-  user: 'root'
-  pass: ''
-  port: 3306
+redis:
+  host: 'redis-15939.c261.us-east-1-4.ec2.cloud.redislabs.com'
+  pass: 'bvKIMvhIXKetkLoVvc6wCDqGkrASNPtE'
+  port: 15939
 
+regeneration-delay: 10 #Regeneração dos blocos delay em segundos!
+permission-bypass: "origin.staff.higher" #Bypass para quebrar bloco no servidor de minas
 
 Server:
   use: false # Deixe true se for o servidor de minas, deixe false se for o servidor normal.
   server-name-default: "rankup" # Nome do servidor padrão
   server-name-bungeecord: "mina" # Nome da mina bungeecord.
-  world-mine: "mina" # Coloque o nome do mundo da mina que estara no servidor da mina.
+  world-mine: "World" # Coloque o nome do mundo da mina que estara no servidor da mina.
   block-potion-effect-dig-speed-and-night-vision-in-world-mine: true #Bloquea o jogador ir para o mundo mina com poção de velocidade e poção de visão noturna
+  title: #Mandar titulo quando ele entrar na mina?
+    use: true
+    line_1: "&e&lMINA"
+    line_2: "&fSejá bem-vindo(a) a mina!"
+
+menu-inventorys:
+  inventory-mina-sair:
+    title: "&8Mina"
+    size: 27
+    items:
+      sair:
+        ID: 262
+        Data: 0
+        Slot: 13
+        Execute: "return"
+        Close-inventory: true
+        Glow: true
+        Name: "&cClique aqui para voltar"
+        Lore:
+          - ""
+          - "&7Clique aqui para voltar ao"
+          - "&7Servidor padrão."
+          - ""
+  inventory-mina-entrar:
+    title: "&8Mina"
+    size: 27
+    items:
+      entrar:
+        ID: 278
+        Data: 0
+        Slot: 11
+        Execute: "return"
+        Close-inventory: true
+        Glow: true
+        Name: "&aMina Principal"
+        Lore:
+          - ""
+          - "&7Clique aqui para ir a"
+          - "&7Mina principal."
+          - ""
+      vendas:
+        ID: 342
+        Data: 0
+        Slot: 15
+        Execute: "command"
+        Command: "warp areadevenda <player>"
+        Close-inventory: true
+        Glow: true
+        Name: "&aArea de Vendas"
+        Lore:
+          - ""
+          - "&7Clique aqui para ir a"
+          - "&7Area de vendas."
+          - ""
+
+Minerios:
+  Minerio1:
+    Metodo: #Coloque aqui em qual bloco vai vir.
+      block-ID: 14
+      block-Data: 0
+    Item: #Configure o item que vai vir.
+      ID: 266
+      Data: 0
+      Glow: false
+      Name: '&eMinerio de Ouro'
+      Lore:
+        - ''
+        - '&aVenda este item na central de /spawn e vá lá!'
+        - ''
+  Minerio2: #
+    Metodo: #Coloque aqui em qual bloco vai vir.
+      block-ID: 129
+      block-Data: 0
+    Item: #Configure o item que vai vir.
+      ID: 405
+      Data: 0
+      Glow: false
+      Name: '&7Minerio Raro'
+      Lore:
+        - ''
+        - '&aVenda este item na central de /spawn e vá lá!'
+        - ''
 
 Blocks_Regeneration:
   Percentage:
-    IRON: 15.0
-    GOLD: 35.0
-    COAL: 70.0
-    LAPIS: 15.0
-    DIAMOND: 45.0
-    REDSTONE: 57.0
-    EMERALD: 90.0
+    IRON: 10.0
+    GOLD: 30.0
+    COAL: 10.0
+    LAPIS: 10.0
+    DIAMOND: 10.0
+    REDSTONE: 10.0
+    EMERALD: 20.0
+
+interacting-connecting: "&cVocê não pode interagir enquanto está se conectando a outros servidores."
+dropping-connecting: "&cVocê não pode dropar enquanto está se conectando a outros servidores."
+digiting-connecting: "&cVocê não pode digitar comandos enquanto está se conectando a outros servidores."
+dont-enough-space-inventory: "&cSeu inventário está lotado!"
+connecting-server-padrao: "&aConectando ao servidor padrão..."
+connecting-server-mina: "&aConectando ao servidor da mina..."
+inventory-dont-have-items: "&cVocê precisa esvaziar seu inventário antes de entrar na área de mineração!"
